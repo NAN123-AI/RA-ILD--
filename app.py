@@ -2,34 +2,45 @@
 import streamlit as st
 import numpy as np
 
-# 页面配置
 st.set_page_config(page_title="RA-ILD风险预测模型", layout="wide")
 
-# ===== 背景图片（使用 st.image 显示在顶部，填满屏幕） =====
-st.image("lung.png", use_column_width=True)
-
-# ===== 半透明浮动卡片 =====
-st.markdown("""
+# ===== 背景 CSS =====
+st.markdown(
+    """
     <style>
-    .stContainer {
-        background: rgba(255, 255, 255, 0.85) !important;
-        padding: 25px !important;
-        border-radius: 20px !important;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.3) !important;
-        margin: 20px !important;
+    /* 背景图片 */
+    .stApp {
+        background-image: url('lung.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
     }
+
+    /* 页面中央卡片 */
+    .stContainer {
+        background: rgba(255,255,255,0.85);
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        margin: 20px;
+    }
+
+    /* 标题文字 */
     h1, h2, h3, h4, h5, h6, .stMarkdown {
-        color: #1a1a1a !important;
-        font-weight: bold !important;
+        color: #1a1a1a;
+        font-weight: bold;
     }
     </style>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True
+)
 
-# 页面标题
+# ===== 页面标题 =====
 st.title("RA-ILD风险预测模型（论文一致版）")
 st.markdown("基于多因素Logistic回归模型（AUC=0.959）")
 
-# 输入区
+# ===== 输入区 =====
 col1, col2 = st.columns(2)
 with col1:
     age = st.slider("年龄", 30, 90, 60)
@@ -41,13 +52,13 @@ with col2:
     mcvab = st.slider("MCV-Ab", 0, 1000, 500)
     mchc = st.slider("MCHC", 260, 350, 320)
 
-# 中心化
+# ===== 中心化 / 标准化 =====
 age_c = (age - 60)/10
 il22_c = (il22 - 220)/50
 mcvab_c = (mcvab - 500)/100
 mchc_c = (mchc - 320)/10
 
-# Logistic回归计算
+# ===== Logistic回归计算 =====
 z = (
     -0.032
     -0.059 * il22_c
@@ -58,7 +69,7 @@ z = (
 )
 risk = 1 / (1 + np.exp(-z))
 
-# 输出预测结果
+# ===== 输出预测结果 =====
 st.subheader("📊 预测结果")
 st.metric("RA-ILD风险概率", f"{risk:.2%}")
 if risk < 0.2:
@@ -69,14 +80,14 @@ else:
     st.error("高风险")
 st.progress(float(risk))
 
-# IL-22提示
+# ===== IL-22提示 =====
 st.subheader("🧬 IL-22临床提示")
 if il22 < 243.06:
     st.error("IL-22 < 243 → 高风险提示")
 else:
     st.success("IL-22 ≥ 243 → 相对低风险")
 
-# 模型说明
+# ===== 模型说明 =====
 st.markdown("""
 ---
 ### 📚 模型说明
