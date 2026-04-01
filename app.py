@@ -4,51 +4,33 @@ import numpy as np
 
 st.set_page_config(page_title="RA-ILD风险预测模型", layout="wide")
 
-# ===== 背景肺图 (全屏 + 内容重叠) =====
+# ===== 背景肺图 =====
+# Streamlit Cloud 上必须用 st.image 显示图片
+st.image("lung.png", use_column_width=True)  # 放在顶部
+
+# ===== 半透明卡片内容 =====
 st.markdown("""
-<style>
-/* 背景图片 */
-.bg-img {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-    opacity: 0.3;  /* 可调透明度 */
-}
-
-/* 页面内容浮在图片上 */
-.content {
-    position: relative;
-    z-index: 1;
-    max-width: 900px;
-    margin: 50px auto;
-    padding: 30px;
-    background: rgba(255,255,255,0.8); /* 半透明背景 */
-    border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-}
-
-/* 标题文字 */
-h1, h2, h3, h4, h5, h6, .stMarkdown {
-    color: #1a1a1a;
-    font-weight: bold;
-}
-</style>
-
-<img class="bg-img" src="lung.png">
+    <style>
+    .stContainer {
+        background: rgba(255,255,255,0.85) !important;
+        padding: 25px !important;
+        border-radius: 20px !important;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3) !important;
+        margin: -600px auto 50px auto !important;  /* 调整上边距覆盖图片 */
+        max-width: 900px !important;
+    }
+    h1, h2, h3, .stMarkdown {
+        color: #1a1a1a !important;
+        font-weight: bold !important;
+    }
+    </style>
 """, unsafe_allow_html=True)
 
-# ===== 页面内容 =====
-st.markdown('<div class="content">', unsafe_allow_html=True)
-
-# 页面标题
+# ===== 页面标题 =====
 st.title("RA-ILD风险预测模型（论文一致版）")
 st.markdown("基于多因素Logistic回归模型（AUC=0.959）")
 
-# 输入区
+# ===== 输入区 =====
 col1, col2 = st.columns(2)
 with col1:
     age = st.slider("年龄", 30, 90, 60)
@@ -104,5 +86,3 @@ st.markdown("""
 - 敏感度 = 97.0%
 - 特异度 = 87.9%
 """)
-
-st.markdown('</div>', unsafe_allow_html=True)
